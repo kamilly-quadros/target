@@ -1,4 +1,5 @@
 import { styles } from "./styles"
+import { Summary } from "../Summary"
 import { colors } from "@/theme/colors"
 import { Separator } from "../Separator"
 import { View, Text } from "react-native"
@@ -18,6 +19,10 @@ export function HomeHeader({ data }: Props) {
                 <Text style={styles.total}>{data.total}</Text>
             </View>
             <Separator color={colors.blue[400]} />
+            <View style={styles.summary}>
+                <Summary data={{ label: "Entradas", value: "R$ 6,184.90" }} icon={{ name: "arrow-upward", color: colors.green[500] }} />
+                <Summary isLeft data={{ label: "Saídas", value: "-R$ 883.65" }} icon={{ name: "arrow-downward", color: colors.red[400] }} />
+            </View>
         </LinearGradient>
     )
 }
