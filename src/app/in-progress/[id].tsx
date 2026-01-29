@@ -1,7 +1,8 @@
 import { View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 import { List } from "@/components/List";
+import { Button } from "@/components/Button";
 import { Progress } from "@/components/Progress";
 import { PageHeader } from "@/components/PageHeader";
 import { Transaction, TransactionProps } from "@/components/Transaction";
@@ -33,7 +34,13 @@ export default function InProgress() {
         <View style={{ flex: 1, padding: 24, gap: 32 }}>
             <PageHeader title="Apple Watch" rightButton={{ icon: "edit", onPress: () => { } }} />
             <Progress data={details} />
-            <List title="Transações" data={transactions} renderItem={({ item }) => <Transaction data={item} onRemove={() => { }} />} />
+            <List
+                title="Transações"
+                data={[]}
+                renderItem={({ item }) => <Transaction data={item} onRemove={() => { }} />}
+                emptyMessage="Nenhuma transação. Toque em nova ransação para guardar seu primeiro dinheiro aqui."
+            />
+            <Button title="Nova transação" onPress={() => router.navigate(`/transaction/${params.id}`)} />
         </View>
     )
 }
