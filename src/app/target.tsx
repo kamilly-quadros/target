@@ -5,9 +5,11 @@ import { Button } from "@/components/Button";
 import { PageHeader } from "@/components/PageHeader";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import { router, useLocalSearchParams } from "expo-router";
+import { useTargetDatabase } from "@/database/useTargetDatabase";
 
 export default function Target() {
     const [name, setName] = useState("")
+    const targetDatabase = useTargetDatabase()
     const [amount, setAmount] = useState<number | null>(0)
     const [isProcessing, setIsProcessing] = useState(false)
     const params = useLocalSearchParams<{ id?: string }>()
@@ -24,6 +26,7 @@ export default function Target() {
     }
     async function create() {
         try {
+            if (amount) await targetDatabase.create({ name, amount })
             Alert.alert("Nova Meta", "Meta criada com sucesso!", [{ text: "Ok", onPress: () => router.back() }])
         } catch (error) {
             Alert.alert("Erro", "Não foi possível criar a meta.")
