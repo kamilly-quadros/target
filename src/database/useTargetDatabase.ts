@@ -42,7 +42,24 @@ export function useTargetDatabase() {
             ORDER BY current DESC
         `)
     }
+    function show(id:number){
+        return database.getFirstAsync<TargetResponde>(`
+            SELECT
+                targets.id,
+                targets.name,
+                targets.amount,
+                COALESCE( SUM(transactions.amount), 0) AS current,
+                COALESCE((SUM(transactions.amount) / targets.amount) * 100, 0) AS percentage,
+                targets.created_at,
+                tagets.updated_at
+            FROM
+                targets
+                LEFT JOIN transactions ON targts.id = transactions.target_id
+            WHERE targets.id = ${id}
+        `)
+    }
     return {
+        show,
         create,
         listBySavedValue
     }
