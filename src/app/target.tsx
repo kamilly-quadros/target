@@ -10,7 +10,7 @@ import { useTargetDatabase } from "@/database/useTargetDatabase";
 export default function Target() {
     const [name, setName] = useState("")
     const targetDatabase = useTargetDatabase()
-    const [amount, setAmount] = useState<number | null>(0)
+    const [amount, setAmount] = useState<number | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
     const params = useLocalSearchParams<{ id?: string }>()
     function handleSave() {
@@ -19,9 +19,19 @@ export default function Target() {
         }
         setIsProcessing(true)
         if (params.id) {
-            //update
+            update()
         } else {
             create()
+        }
+    }
+    async function update() {
+        try {
+            await targetDatabase.update({ id: Number(params.id), name, amount: amount! })
+            Alert.alert("Sucesso!", "Meta atualizada com sucesso!", [{ text: "Ok", onPress: () => router.back() }])
+        } catch (error) {
+            Alert.alert("Erro", "Não foi possível atualizar a meta.")
+            console.log(error)
+            setIsProcessing(false)
         }
     }
     async function create() {
