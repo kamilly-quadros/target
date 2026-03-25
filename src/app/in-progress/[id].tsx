@@ -49,7 +49,7 @@ export default function InProgress() {
     if (isFetching) { return <Loading /> }
     return (
         <View style={{ flex: 1, padding: 24, gap: 32 }}>
-            <PageHeader title={details.name} rightButton={{ icon: "edit", onPress: () => { } }} />
+            <PageHeader title={details.name} rightButton={{ icon: "edit", onPress: () => { router.navigate(`/target?id=${params.id}`) } }} />
             <Progress data={details} />
             <List
                 title="Transações"
