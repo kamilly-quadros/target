@@ -7,13 +7,13 @@ import { router, useLocalSearchParams } from "expo-router"
 import { CurrencyInput } from "@/components/CurrencyInput";
 import { TransactionTypes } from "@/utils/TransactionTypes";
 import { TransactionType } from "@/components/TransactionType";
-import { useTransactionsDatabase } from "@/database/useTransactionsDatabase";
+import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 
 export default function Transaction() {
     const [observation, setObservation] = useState("")
     const [isCreating, setIsCreating] = useState(false)
     const params = useLocalSearchParams<{ id: string }>()
-    const transactionsDatabase = useTransactionsDatabase()
+    const transactionsDatabase = useTransactionDatabase()
     const [amount, setAmount] = useState<number | null>(0)
     const [type, setType] = useState(TransactionTypes.Input)
     async function handleCreate() {
