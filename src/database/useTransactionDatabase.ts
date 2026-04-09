@@ -32,7 +32,10 @@ export function useTransactionDatabase() {
         ORDER BY created_at DESC
     `)
     }
+    async function remove(id:number) {
+        await database.runAsync("DELETE FROM transactions WHERE id = ?", id)
+    }
     return {
-        create, listByTargetId
+        create, listByTargetId, remove
     }
 }
