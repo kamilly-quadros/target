@@ -25,7 +25,7 @@ export function useTargetDatabase() {
             $amount: data.amount
         })
     }
-    function listBySavedValue() {
+    function listByClosestTarget() {
         return database.getAllAsync<TargetResponde>(`
             SELECT
                 targets.id,
@@ -42,7 +42,7 @@ export function useTargetDatabase() {
                 targets.id,
                 targets.name,
                 targets.amount
-            ORDER BY current DESC
+            ORDER BY percentage DESC
         `)
     }
     function show(id: number) {
@@ -83,6 +83,6 @@ export function useTargetDatabase() {
         create,
         update,
         remove,
-        listBySavedValue
+        listByClosestTarget
     }
 }

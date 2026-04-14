@@ -5,25 +5,23 @@ import { View, StatusBar, Alert } from "react-native";
 import { List } from "@/components/List";
 import { Button } from "@/components/Button";
 import { Loading } from "@/components/Loading";
-import { HomeHeader } from "@/components/HomeHeader";
+import { HomeHeader, HomeHeaderProps } from "@/components/HomeHeader";
 import { Target, TargetProps } from "@/components/Target";
 
 import { numberToCurrency } from "@/utils/numberToCurrency";
 
 import { useTargetDatabase } from "@/database/useTargetDatabase"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 
-const summary = {
-    total: "R$ 2.680,00",
-    input: { label: "Entradas", value: "R$ 6,184.90" },
-    output: { label: "Saídas", value: "-R$ 883.65" }
-}
 export default function Index() {
     const targetDatabase = useTargetDatabase()
     const [isFetching, setIsFetching] = useState(true)
     const [targets, setTargets] = useState<TargetProps[]>([])
+    const [summary, setSummary] = useState<HomeHeaderProps>()
+    const transactionsDatabase = useTransactionDatabase()
     async function fetchTargets(): Promise<TargetProps[]> {
         try {
-            const response = await targetDatabase.listBySavedValue()
+            const response = await targetDatabase.listByClosestTarget()
             return response.map((item) => ({
                 id: String(item.id),
                 name: item.name,
@@ -37,10 +35,31 @@ export default function Index() {
             return []
         }
     }
+    async function fetchSummary(): Promise<HomeHeaderProps | undefined> {
+        try {
+            const response = await transactionsDatabase.summary()
+            return {
+                total: numberToCurrency((response?.input ?? 0) + (response?.output ?? 0)),
+                input: {
+                    label: "Entradas",
+                    value: numberToCurrency(response?.input ?? 0)
+                },
+                output: {
+                    label: "Saídas",
+                    value: numberToCurrency(response?.output ?? 0)
+                }
+            }
+        } catch (error) {
+            Alert.alert("Erro", "Não foi possível carregar o resumo.")
+            console.error(error)
+        }
+    }
     async function fetchData() {
         const targetDataPromise = fetchTargets()
-        const [targetData] = await Promise.all([targetDataPromise])
+        const dataSummaryPromise = fetchSummary()
+        const [targetData, dataSummary] = await Promise.all([targetDataPromise, dataSummaryPromise])
         setTargets(targetData)
+        setSummary(dataSummary)
         setIsFetching(false)
     }
     useFocusEffect(
@@ -54,7 +73,7 @@ export default function Index() {
     return (
         <View style={{ flex: 1 }}>
             <StatusBar barStyle="light-content" />
-            <HomeHeader data={summary} />
+            {summary && <HomeHeader data={summary} />}
             <List
                 title="Metas"
                 data={targets}
